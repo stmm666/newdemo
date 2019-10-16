@@ -8,3 +8,6 @@ last
 new branch
 Creating a new branch is quick and simple.
 a new
+new0
+new1
+new2
