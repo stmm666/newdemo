@@ -2,11 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <title>Document</title>
 </head>
 <body>
-    <body>
-        <input class="uploadImg" type="file" name="file" id="file">
-    </body>
+
+    <script>
+        var url = 'https://geelycv-app-dev-s1.oss-cn-hangzhou.aliyuncs.com/7d2dc0f3-1019-4a4b-a55c-87edaf280130.jpg';
+        imgUrlToBase64(url)
+        function imgUrlToBase64 (url) {
+            //一定要设置为let，不然图片不显示
+            let image = new Image();
+
+            //解决跨域问题
+            image.setAttribute('crossOrigin', 'anonymous');
+            
+            let imageUrl = url+'?timeStamp='+new Date();
+            image.src = imageUrl
+            //image.onload为异步加载
+            image.onload = () => {
+                var canvas = document.createElement("canvas");
+                canvas.width = image.width;
+                canvas.height = image.height;
+                var context = canvas.getContext('2d');
+                context.drawImage(image, 0, 0, image.width, image.height);
+                
+                var quality = 0.8;
+                //这里的dataurl就是base64类型
+                var dataURL = canvas.toDataURL("image/jpeg", quality);//使用toDataUrl将图片转换成jpeg的格式,不要把图片压缩成png，因为压缩成png后base64的字符串可能比不转换前的长！
+                console.log(dataURL)
+                return dataURL;
+                // that.shareDetailend(dataURL)
+                // console.log(dataURL)
+            }
+        }
+    </script>
 </body>
 </html>
