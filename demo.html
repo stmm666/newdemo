@@ -5,6 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>demo</title>
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/vant@2.12/lib/index.css"
+    />
     <style>
     html,body{
         margin: 0;
@@ -45,6 +49,80 @@
         height: 1rem;
         display: block;
     }
+    .refreshShade{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        flex-wrap: wrap;
+        color: #fff;
+        position: absolute;
+        top: 0;
+        background: rgba(0,0,0,0.50);
+    }
+    .refreshShade i{
+        font-size: 0.56rem;
+    }
+    .refreshShade p{
+        width: 100%;
+        margin-top: 0.2rem;
+        font-size: 0.28rem;
+        font-family: PingFangSC, PingFangSC-Medium;
+        font-weight: bold;
+        text-align: center;
+        line-height: 0.4rem;
+    }
+    .playControl{
+        width: 90%;
+        padding: 0.24rem 5%;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        background: linear-gradient(0deg,rgba(0,0,0,0.50), rgba(0,0,0,0.40) 44%, rgba(0,0,0,0.00) 91%);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .playTime{
+        font-size: 0.24rem;
+        font-family: PingFangSC, PingFangSC-Medium;
+        font-weight: 500;
+        text-align: justify;
+        color: #ffffff;
+        line-height: 0.34rem;
+        margin-right: 0.32rem;
+        flex-shrink: 0;
+    }
+    .progressBar{
+        width: 100%;
+        height: 0.08rem;
+        opacity: 0.6;
+        background: #ffffff;
+        border-radius: 0.04rem;
+        position: relative;
+    }
+    .progressLine{
+        width: 0;
+        height: 100%;
+        border-radius: 0.04rem;
+        background: linear-gradient(153deg,#6491c2 23%, #3066a1 100%);
+    }
+    .progressBTn{
+        width: 0.24rem;
+        height: 0.24rem;
+        background: #ffffff;
+        border-radius: 50%;
+        position: absolute;
+        top: -0.08rem;
+        left:0;
+    }
+    .playControl img{
+        width: 0.48rem;
+        display: block;
+        margin-left: 0.32rem;
+        flex-shrink: 0;
+    }
     </style>
 </head>
 <body>
@@ -65,8 +143,25 @@
           <div class="playShade" v-if="!showProgressBar&&playing!=2">
             <p><img :src="playing==1?'./playing.png':'./pause.png'" alt="" @click="playVideo()"></p>
           </div>
+          <!-- 重播 -->
+          <div class="refreshShade" v-if="playing==2" @click="playVideo">
+            <van-icon name="replay" />
+            <p>重播</p>
+          </div>
+          <!-- 播放控制条 -->
+          <div class="playControl" v-if="!showProgressBar&&playing!=2">
+            <p class="playTime">{{playTime}}</p>
+            <!-- <div class="progressBar" @touchstart="progressTouchstart">
+              <p class="progressLine" :style="'width:'+progressBarW"></p>
+              <p class="progressBTn" :style="'left:calc('+progressBarW+' - 0.12rem)'"></p>
+            </div> -->
+            <!-- <van-slider v-model="sliderValue" @change="changeSlider" /> -->
+            <img src="./fullScreen.png" alt="" v-if="!fullScreenStatus" @click="changeFullScreen">
+            <img src="./cancelFullScreen.png" alt="" v-if="fullScreenStatus" @click="changeFullScreen">
+          </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
     <script>
         var vm = new Vue({
             el:'#app',
@@ -79,7 +174,7 @@
                 showProgressBar: false, //显示底部进度条
                 progressBarW:0, //底部进度条进度
                 sliderValue:0, //进度位置
-                playTime:'',//播放时长
+                playTime:'00:00',//播放时长
                 arrowStatus:false, //是否收起
                 showArrow:true, //是否显示折叠按钮
                 player:null,//阿里播放器，暂时无用
@@ -91,6 +186,15 @@
                 this.playfun()
             },
             methods:{
+                // 拖动视频进度
+                changeSlider(e){
+                    var elevideo = document.getElementById("J_prismPlayer");
+                    elevideo.currentTime = elevideo.duration*(e/100)
+                    elevideo.play()
+                },
+                changeFullScreen(){
+
+                },
                 // 点击视频区域
                 touchVideo(){
                     this.showProgressBar = !this.showProgressBar;
@@ -113,7 +217,7 @@
                 // 视频播放
                 playfun(vid){
                     let that = this;
-                    this.videoAddress = './video横屏.mp4'
+                    this.videoAddress = 'video横屏.mp4'
                     var elevideo = document.getElementById("J_prismPlayer");
                     elevideo.addEventListener('loadedmetadata', function () {
                         setTimeout(()=>{
